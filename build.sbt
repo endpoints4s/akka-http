@@ -63,11 +63,6 @@ val `akka-http-client` =
           CrossVersion.for3Use2_13
         )
       ),
-      excludeDependencies ++= {
-        if (scalaBinaryVersion.value.startsWith("3")) {
-          List(ExclusionRule("org.scala-lang.modules", "scala-collection-compat_2.13"))
-        } else Nil
-      }
     )
 
 val `akka-http-server` =
@@ -103,13 +98,6 @@ val `akka-http-server` =
           CrossVersion.for3Use2_13
         )
       ),
-      excludeDependencies ++= {
-        if (scalaBinaryVersion.value.startsWith("3")) {
-          List(
-            ExclusionRule("org.scala-lang.modules", "scala-collection-compat_2.13")
-          )
-        } else Nil
-      },
       versionPolicyIgnored ++= Seq(
         // Was removed from akka-http https://github.com/akka/akka-http/pull/3849
         "com.twitter" % "hpack"
