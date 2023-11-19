@@ -103,4 +103,15 @@ val `akka-http-server` =
       )
     )
 
+val `akka-http` =
+  project
+    .in(file("."))
+    .aggregate(
+      `akka-http-server`,
+      `akka-http-client`
+    )
+    .settings(
+      publish / skip := true
+    )
+
 Global / onChangedBuildSource := ReloadOnSourceChanges
