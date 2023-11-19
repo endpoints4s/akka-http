@@ -1,6 +1,5 @@
 import xerial.sbt.Sonatype.GitHubHosting
 
-val algebra = "org.endpoints4s" %% "algebra" % "1.10.0"
 val algebraTestkit = "org.endpoints4s" %% "algebra-testkit" % "4.1.0"
 val algebraCirceTestkit = "org.endpoints4s" %% "algebra-circe-testkit" % "4.1.0"
 val jsonSchemaGeneric = "org.endpoints4s" %% "json-schema-generic" % "1.10.0"
@@ -28,8 +27,8 @@ inThisBuild(
         url("http://julien.richard-foy.fr")
       )
     ),
-    scalaVersion := "2.13.8",
-    crossScalaVersions := Seq("2.13.8", "3.0.2", "2.12.13"),
+    scalaVersion := "2.13.10",
+    crossScalaVersions := Seq("2.13.10", "3.1.3", "2.12.13"),
     versionPolicyIgnoredInternalDependencyVersions := Some("^\\d+\\.\\d+\\.\\d+\\+\\d+".r)
   )
 )
@@ -41,11 +40,18 @@ val `akka-http-client` =
       name := "akka-http-client",
       publish / skip := scalaBinaryVersion.value.startsWith("3"),
       libraryDependencies ++= Seq(
-        algebra,
-        openapi,
-        algebraTestkit % Test,
-        algebraCirceTestkit % Test,
-        jsonSchemaGeneric % Test,
+        openapi.cross(
+          CrossVersion.for3Use2_13
+        ),
+        (algebraTestkit % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        (algebraCirceTestkit % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        (jsonSchemaGeneric % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
         ("com.typesafe.akka" %% "akka-stream" % akkaActorVersion % Provided).cross(
           CrossVersion.for3Use2_13
         ),
@@ -71,11 +77,18 @@ val `akka-http-server` =
       name := "akka-http-server",
       publish / skip := scalaBinaryVersion.value.startsWith("3"),
       libraryDependencies ++= Seq(
-        algebra,
-        openapi,
-        algebraTestkit % Test,
-        algebraCirceTestkit % Test,
-        jsonSchemaGeneric % Test,
+        openapi.cross(
+          CrossVersion.for3Use2_13
+        ),
+        (algebraTestkit % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        (algebraCirceTestkit % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        (jsonSchemaGeneric % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
         ("com.typesafe.akka" %% "akka-http" % akkaHttpVersion).cross(CrossVersion.for3Use2_13),
         ("com.typesafe.akka" %% "akka-stream" % akkaActorVersion % Provided).cross(
           CrossVersion.for3Use2_13
