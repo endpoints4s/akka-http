@@ -14,7 +14,7 @@ inThisBuild(
     versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
     organization := "org.endpoints4s",
     sonatypeProjectHosting := Some(
-      GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
+      GitHubHosting("endpoints4s", "akka-http", "julien@richard-foy.fr")
     ),
     homepage := Some(sonatypeProjectHosting.value.get.scmInfo.browseUrl),
     licenses := Seq(
