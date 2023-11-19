@@ -1,25 +1,61 @@
-import EndpointsSettings._
+import xerial.sbt.Sonatype.GitHubHosting
 
-val `algebra-jvm` = LocalProject("algebraJVM")
-val `algebra-testkit-jvm` = LocalProject("algebra-testkitJVM")
-val `algebra-circe-testkit-jvm` = LocalProject("algebra-circe-testkitJVM")
-val `json-schema-generic-jvm` = LocalProject("json-schema-genericJVM")
-val `openapi-jvm` = LocalProject("openapiJVM")
+val algebra = "org.endpoints4s" %% "algebra" % "1.10.0"
+val algebraTestkit = "org.endpoints4s" %% "algebra-testkit" % "4.1.0"
+val algebraCirceTestkit = "org.endpoints4s" %% "algebra-circe-testkit" % "4.1.0"
+val jsonSchemaGeneric = "org.endpoints4s" %% "json-schema-generic" % "1.10.0"
+val openapi = "org.endpoints4s" %% "openapi" % "4.4.0"
+
+val akkaActorVersion = "2.6.17"
+val akkaHttpVersion = "10.2.6"
+
+inThisBuild(
+  List(
+    versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
+    organization := "org.endpoints4s",
+    sonatypeProjectHosting := Some(
+      GitHubHosting("endpoints4s", "play", "julien@richard-foy.fr")
+    ),
+    homepage := Some(sonatypeProjectHosting.value.get.scmInfo.browseUrl),
+    licenses := Seq(
+      "MIT License" -> url("http://opensource.org/licenses/mit-license.php")
+    ),
+    developers := List(
+      Developer(
+        "julienrf",
+        "Julien Richard-Foy",
+        "julien@richard-foy.fr",
+        url("http://julien.richard-foy.fr")
+      )
+    ),
+    scalaVersion := "2.13.8",
+    crossScalaVersions := Seq("2.13.8", "3.0.2", "2.12.13"),
+    versionPolicyIgnoredInternalDependencyVersions := Some("^\\d+\\.\\d+\\.\\d+\\+\\d+".r)
+  )
+)
 
 val `akka-http-client` =
   project
     .in(file("client"))
     .settings(
-      publishSettings,
-      `scala 2.12 to dotty`,
       name := "akka-http-client",
       publish / skip := scalaBinaryVersion.value.startsWith("3"),
       libraryDependencies ++= Seq(
-        ("com.typesafe.akka" %% "akka-stream" % akkaActorVersion % Provided).cross(CrossVersion.for3Use2_13),
+        algebra,
+        openapi,
+        algebraTestkit % Test,
+        algebraCirceTestkit % Test,
+        jsonSchemaGeneric % Test,
+        ("com.typesafe.akka" %% "akka-stream" % akkaActorVersion % Provided).cross(
+          CrossVersion.for3Use2_13
+        ),
         ("com.typesafe.akka" %% "akka-http" % akkaHttpVersion).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-stream-testkit" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        scalaTestDependency
+        ("com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        ("com.typesafe.akka" %% "akka-stream-testkit" % akkaActorVersion % Test).cross(
+          CrossVersion.for3Use2_13
+        )
       ),
       excludeDependencies ++= {
         if (scalaBinaryVersion.value.startsWith("3")) {
@@ -27,27 +63,32 @@ val `akka-http-client` =
         } else Nil
       }
     )
-    .dependsOn(`algebra-jvm`)
-    .dependsOn(`openapi-jvm`)
-    .dependsOn(`algebra-testkit-jvm` % Test)
-    .dependsOn(`algebra-circe-testkit-jvm` % Test)
-    .dependsOn(`json-schema-generic-jvm` % "test->test")
 
 val `akka-http-server` =
   project
     .in(file("server"))
     .settings(
-      publishSettings,
-      `scala 2.12 to dotty`,
       name := "akka-http-server",
       publish / skip := scalaBinaryVersion.value.startsWith("3"),
       libraryDependencies ++= Seq(
+        algebra,
+        openapi,
+        algebraTestkit % Test,
+        algebraCirceTestkit % Test,
+        jsonSchemaGeneric % Test,
         ("com.typesafe.akka" %% "akka-http" % akkaHttpVersion).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-stream" % akkaActorVersion % Provided).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-stream-testkit" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        ("com.typesafe.akka" %% "akka-testkit" % akkaActorVersion % Test).cross(CrossVersion.for3Use2_13),
-        scalaTestDependency
+        ("com.typesafe.akka" %% "akka-stream" % akkaActorVersion % Provided).cross(
+          CrossVersion.for3Use2_13
+        ),
+        ("com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        ("com.typesafe.akka" %% "akka-stream-testkit" % akkaActorVersion % Test).cross(
+          CrossVersion.for3Use2_13
+        ),
+        ("com.typesafe.akka" %% "akka-testkit" % akkaActorVersion % Test).cross(
+          CrossVersion.for3Use2_13
+        )
       ),
       excludeDependencies ++= {
         if (scalaBinaryVersion.value.startsWith("3")) {
@@ -61,7 +102,5 @@ val `akka-http-server` =
         "com.twitter" % "hpack"
       )
     )
-    .dependsOn(`algebra-jvm`, `openapi-jvm`)
-    .dependsOn(`algebra-testkit-jvm` % Test)
-    .dependsOn(`algebra-circe-testkit-jvm` % Test)
-    .dependsOn(`json-schema-generic-jvm` % "test->test")
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
