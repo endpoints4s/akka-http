@@ -1,4 +1,5 @@
 import xerial.sbt.Sonatype.GitHubHosting
+import com.lightbend.paradox.markdown.Writer
 
 val algebraTestkit = "org.endpoints4s" %% "algebra-testkit" % "4.1.0"
 val algebraCirceTestkit = "org.endpoints4s" %% "algebra-circe-testkit" % "4.1.0"
@@ -101,6 +102,49 @@ val `akka-http-server` =
       versionPolicyIgnored ++= Seq(
         // Was removed from akka-http https://github.com/akka/akka-http/pull/3849
         "com.twitter" % "hpack"
+      )
+    )
+
+val documentation =
+  project.in(file("documentation"))
+    .enablePlugins(ParadoxMaterialThemePlugin, ParadoxPlugin, ParadoxSitePlugin, ScalaUnidocPlugin, SitePreviewPlugin)
+    .settings(
+      publish / skip := true,
+      coverageEnabled := false,
+      autoAPIMappings := true,
+      Compile / paradoxMaterialTheme := {
+        val theme = (Compile / paradoxMaterialTheme).value
+        val repository =
+          (ThisBuild / sonatypeProjectHosting).value.get.scmInfo.browseUrl.toURI
+        theme
+          .withRepository(repository)
+          .withSocial(repository)
+          .withCustomStylesheet("snippets.css")
+      },
+      paradoxProperties ++= Map(
+        "version" -> version.value,
+        "scaladoc.base_url" -> s".../${(packageDoc / siteSubdirName).value}",
+        "github.base_url" -> s"${homepage.value.get}/blob/v${version.value}"
+      ),
+      paradoxDirectives += ((_: Writer.Context) =>
+        org.endpoints4s.paradox.coordinates.CoordinatesDirective
+        ),
+      ScalaUnidoc / unidoc / scalacOptions ++= Seq(
+        "-implicits",
+        "-diagrams",
+        "-groups",
+        "-doc-source-url",
+        s"${homepage.value.get}/blob/v${version.value}€{FILE_PATH}.scala",
+        "-sourcepath",
+        (ThisBuild / baseDirectory).value.absolutePath
+      ),
+      ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(
+        `akka-http-server`, `akka-http-client`
+      ),
+      packageDoc / siteSubdirName := "api",
+      addMappingsToSiteDir(
+        ScalaUnidoc / packageDoc / mappings,
+        packageDoc / siteSubdirName
       )
     )
 
