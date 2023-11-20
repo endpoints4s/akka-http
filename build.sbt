@@ -63,7 +63,7 @@ val `akka-http-client` =
         ("com.typesafe.akka" %% "akka-stream-testkit" % akkaActorVersion % Test).cross(
           CrossVersion.for3Use2_13
         )
-      ),
+      )
     )
 
 val `akka-http-server` =
@@ -106,8 +106,15 @@ val `akka-http-server` =
     )
 
 val documentation =
-  project.in(file("documentation"))
-    .enablePlugins(ParadoxMaterialThemePlugin, ParadoxPlugin, ParadoxSitePlugin, ScalaUnidocPlugin, SitePreviewPlugin)
+  project
+    .in(file("documentation"))
+    .enablePlugins(
+      ParadoxMaterialThemePlugin,
+      ParadoxPlugin,
+      ParadoxSitePlugin,
+      ScalaUnidocPlugin,
+      SitePreviewPlugin
+    )
     .settings(
       publish / skip := true,
       coverageEnabled := false,
@@ -123,12 +130,13 @@ val documentation =
       },
       paradoxProperties ++= Map(
         "version" -> version.value,
+        "akka-version" -> akkaActorVersion,
         "scaladoc.base_url" -> s".../${(packageDoc / siteSubdirName).value}",
         "github.base_url" -> s"${homepage.value.get}/blob/v${version.value}"
       ),
       paradoxDirectives += ((_: Writer.Context) =>
         org.endpoints4s.paradox.coordinates.CoordinatesDirective
-        ),
+      ),
       ScalaUnidoc / unidoc / scalacOptions ++= Seq(
         "-implicits",
         "-diagrams",
@@ -139,7 +147,8 @@ val documentation =
         (ThisBuild / baseDirectory).value.absolutePath
       ),
       ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(
-        `akka-http-server`, `akka-http-client`
+        `akka-http-server`,
+        `akka-http-client`
       ),
       packageDoc / siteSubdirName := "api",
       addMappingsToSiteDir(

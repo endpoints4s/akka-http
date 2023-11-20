@@ -16,7 +16,6 @@ jobs:
           distribution: temurin
           java-version: 11
           cache: sbt
-      - run: npm install jsdom@12.2.0
       - run: docker run -d -p 8080:8080 julienrf/endpoints4s-stubserver:1.1.0
       - run: sbt "++ 2.12 test"
 
@@ -30,7 +29,6 @@ jobs:
           distribution: temurin
           java-version: 11
           cache: sbt
-      - run: npm install jsdom@12.2.0
       - run: sudo apt-get install graphviz
       - run: docker run -d -p 8080:8080 julienrf/endpoints4s-stubserver:1.1.0
       - run: sbt "++ 2.13 ;coverage ;test ;coverageReport ;coverageAggregate ;documentation/makeSite"
@@ -46,7 +44,6 @@ jobs:
           distribution: temurin
           java-version: 11
           cache: sbt
-      - run: npm install jsdom@12.2.0
       - run: sbt "++ 3 compile"
 
   versionPolicy:

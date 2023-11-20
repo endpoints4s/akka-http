@@ -17,12 +17,12 @@ jobs:
           java-version: 11
           cache: sbt
       - run: sbt versionCheck
+      - run: sbt ci-release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-      - run: sbt ci-release
       - name: Generate site
         run: sbt documentation/makeSite
       - uses: JamesIves/github-pages-deploy-action@4.1.9
