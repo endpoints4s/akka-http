@@ -52,7 +52,7 @@ The `ChunkedEntities` interpreter fixes the `Chunks[A]` type to `akka.stream.sca
 
 This means that, given the following endpoint definition:
 
-@@snip [ChunkedEntitiesDocs.scala](/algebras/algebra/src/test/scala/endpoints4s/algebra/ChunkedEntitiesDocs.scala) { #streamed-endpoint }
+@@snip [ChunkedEntitiesDocs.scala](/client/src/test/scala/endpoints4s/akkahttp/client/ChunkedEntitiesDocs.scala) { #streamed-endpoint }
 
 It can be invoked as follows:
 
@@ -87,7 +87,7 @@ The `ChunkedEntities` interpreter fixes the `Chunks[A]` type to `akka.stream.sca
 
 For instance, given the following chunked endpoint definition:
 
-@@snip [ChunkedEntitiesDocs.scala](/algebras/algebra/src/test/scala/endpoints4s/algebra/ChunkedEntitiesDocs.scala) { #streamed-endpoint }
+@@snip [ChunkedEntitiesDocs.scala](/server/src/test/scala/endpoints4s/akkahttp/server/ChunkedEntitiesDocs.scala) { #streamed-endpoint }
 
 It can be implemented as follows:
 
